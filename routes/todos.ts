@@ -1,47 +1,19 @@
 import { Router } from 'express';
-import { Todo } from '../models/Todo';
-
-let todos: Todo[] = [];
+import {
+	getTodo,
+	postTodo,
+	putTodo,
+	deleteTodo,
+} from '../controllers/todo-controllers';
 
 const router = Router();
 
-router.get('/todo', (req, res, next) => {
-	res.status(200).json({ todos: todos });
-});
+router.get('/todo', getTodo);
 
-router.post('/todo', (req, res, next) => {
-	const { todo } = req.body;
+router.post('/todo', postTodo);
 
-	const newTodo: Todo = {
-		todo,
-		id: new Date().toISOString() + Math.random() + todo,
-	};
+router.put('/todo/:todoId', putTodo);
 
-	todos.push(newTodo);
-
-	res.status(201).json({ created: newTodo });
-});
-
-router.put('/todo/:todoId', (req, res, next) => {
-	const { todoId } = req.params;
-
-	const foundTodo = todos.find((todo) => todo.id === todoId);
-
-	if (!foundTodo) {
-		return res.status(404).json({ error: "Couldn't find mention ID" });
-	}
-
-	foundTodo!.todo = req.body.todo;
-
-	res.status(200).json({ updated: foundTodo });
-});
-
-router.delete('/todo/:todoId', (req, res, next) => {
-	const { todoId } = req.params;
-
-	todos = todos.filter((todo) => todo.id !== todoId);
-
-	res.status(200).json({ deleted: 'successfully deleted' });
-});
+router.delete('/todo/:todoId', deleteTodo);
 
 export default router;
